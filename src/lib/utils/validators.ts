@@ -18,10 +18,11 @@ export function isValidThreadsUrl(url: string): boolean {
 		const pathname = parsedUrl.pathname;
 
 		// Format 1: /t/CODE/ or /t/CODE
-		const shortFormat = /^\/t\/[\w-]+\/?$/;
+		const shortFormat = /^\/t\/[\w.-]+\/?$/;
 
 		// Format 2: /@username/post/CODE or /@username/post/CODE/
-		const longFormat = /^\/@[\w.]+\/post\/[\w-]+\/?$/;
+		// Updated to allow hyphens in usernames and dots in post codes
+		const longFormat = /^\/@[\w.-]+\/post\/[\w.-]+\/?$/;
 
 		return shortFormat.test(pathname) || longFormat.test(pathname);
 	} catch {
