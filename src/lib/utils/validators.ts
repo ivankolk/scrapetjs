@@ -10,7 +10,9 @@ export function isValidThreadsUrl(url: string): boolean {
 
 		if (
 			parsedUrl.hostname !== 'www.threads.net' &&
-			parsedUrl.hostname !== 'threads.net'
+			parsedUrl.hostname !== 'threads.net' &&
+			parsedUrl.hostname !== 'www.threads.com' &&
+			parsedUrl.hostname !== 'threads.com'
 		) {
 			return false;
 		}
@@ -36,8 +38,12 @@ export function isValidThreadsUrl(url: string): boolean {
 export function normalizeThreadsUrl(url: string): string {
 	const parsedUrl = new URL(url);
 
-	// Ensure www. prefix
-	if (parsedUrl.hostname === 'threads.net') {
+	// Ensure correct hostname
+	if (
+		parsedUrl.hostname === 'threads.net' ||
+		parsedUrl.hostname === 'threads.com' ||
+		parsedUrl.hostname === 'www.threads.com'
+	) {
 		parsedUrl.hostname = 'www.threads.net';
 	}
 

@@ -19,6 +19,7 @@ import type { ScrapeResult } from '@/types/threads';
 
 export function ScraperForm() {
 	const [url, setUrl] = useState('');
+	const [mode, setMode] = useState<'post' | 'profile'>('post');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [data, setData] = useState<NonNullable<ScrapeResult['data']> | null>(
@@ -37,7 +38,7 @@ export function ScraperForm() {
 			const response = await fetch('/api/scrape', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ url }),
+				body: JSON.stringify({ url, mode }),
 			});
 
 			const result: ScrapeResult = await response.json();
@@ -68,11 +69,35 @@ export function ScraperForm() {
 		<div className='mx-auto max-w-3xl space-y-8'>
 			<form onSubmit={handleSubmit}>
 				<Field>
+					<FieldLabel htmlFor='mode-select'>Parsing Mode</FieldLabel>
+					<div className='relative'>
+						<select
+							id='mode-select'
+							value={mode}
+							onChange={(e) => setMode(e.target.value as 'post' | 'profile')}
+							disabled={loading}
+							className='flex h-9 w-[200px] rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+						>
+							<option value='post'>Single Post</option>
+							<option value='profile'>Profile Posts</option>
+						</select>
+					</div>
+					<FieldDescription>
+						Choose whether to scrape a single post or a user&apos;s recent
+						posts.
+					</FieldDescription>
+				</Field>
+
+				<Field className='mt-4'>
 					<FieldLabel htmlFor='url-input'>Threads URL</FieldLabel>
 					<div className='flex gap-2'>
 						<Input
 							id='url-input'
-							placeholder='https://www.threads.net/t/...'
+							placeholder={
+								mode === 'post'
+									? 'https://www.threads.net/t/...'
+									: 'https://www.threads.net/@username'
+							}
 							value={url}
 							onChange={(e) => setUrl(e.target.value)}
 							disabled={loading}
@@ -94,7 +119,9 @@ export function ScraperForm() {
 						</Button>
 					</div>
 					<FieldDescription>
-						Enter a Threads URL to extract post data and replies.
+						{mode === 'post'
+							? 'Enter a Threads post URL to extract content and replies.'
+							: 'Enter a Threads profile URL to extract recent posts.'}
 					</FieldDescription>
 				</Field>
 
@@ -127,6 +154,8 @@ export function ScraperForm() {
 													src={data.thread.author.profilePicture}
 													alt={data.thread.author.username}
 													className='h-full w-full object-cover'
+													referrerPolicy='no-referrer'
+													crossOrigin='anonymous'
 												/>
 											)}
 										</div>
