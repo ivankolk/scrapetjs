@@ -7,6 +7,14 @@ import {
 import { config } from '@/lib/config';
 import { BrowserError, TimeoutError } from '@/lib/utils/errors';
 
+const USER_AGENTS = [
+	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0',
+	'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+	'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15',
+];
+
 export class BrowserManager {
 	private browser: Browser | null = null;
 	private context: BrowserContext | null = null;
@@ -18,10 +26,12 @@ export class BrowserManager {
 				headless: config.scraper.headless,
 			});
 
+			const userAgent =
+				USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+
 			this.context = await this.browser.newContext({
 				viewport: config.scraper.viewport,
-				userAgent:
-					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+				userAgent,
 			});
 
 			this.page = await this.context.newPage();

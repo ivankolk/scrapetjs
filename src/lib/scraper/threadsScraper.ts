@@ -196,14 +196,15 @@ export async function scrapeProfile(
 
 		await browserManager.navigateToPage(normalizedUrl, timeout);
 
-		// Initial wait
-		await page.waitForTimeout(2500);
+		// Initial random wait (2-4s)
+		await sleep(2000, 4000);
 
 		// Scroll loop
 		const MAX_SCROLLS = 5;
 		for (let i = 0; i < MAX_SCROLLS; i++) {
 			await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-			await page.waitForTimeout(1500);
+			// Random wait between scrolls (1.5-3s)
+			await sleep(1500, 3000);
 		}
 
 		// Parse captured payloads to find posts
@@ -260,7 +261,7 @@ export async function scrapeProfile(
 			},
 		};
 	} catch (error) {
-		let errorCode: ErrorCode = ErrorCode.INTERNAL_ERROR;
+		const errorCode: ErrorCode = ErrorCode.INTERNAL_ERROR;
 		let errorMessage = 'An unknown error occurred';
 		let errorDetails: unknown;
 
@@ -335,4 +336,12 @@ function findPostLikeObjects(node: any): any[] {
 
 	walk(node);
 	return found;
+}
+
+/**
+ * Sleep for a random duration between min and max milliseconds
+ */
+function sleep(min: number, max: number): Promise<void> {
+	const duration = Math.floor(Math.random() * (max - min + 1)) + min;
+	return new Promise((resolve) => setTimeout(resolve, duration));
 }

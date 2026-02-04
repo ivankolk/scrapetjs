@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Field, FieldLabel, FieldDescription } from '@/components/ui/field';
-import type { ScrapeResult } from '@/types/threads';
+import type { ScrapeResult, ThreadPost } from '@/types/threads';
 
 export function ScraperForm() {
 	const [url, setUrl] = useState('');
@@ -143,86 +143,22 @@ export function ScraperForm() {
 
 					<TabsContent value='preview' className='mt-4 space-y-4'>
 						{/* Thread Post Preview */}
-						{data.thread && (
-							<Card>
-								<CardHeader className='pb-4'>
-									<div className='flex items-center gap-3'>
-										<div className='h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted'>
-											{data.thread.author?.profilePicture && (
-												// eslint-disable-next-line @next/next/no-img-element
-												<img
-													src={data.thread.author.profilePicture}
-													alt={data.thread.author.username}
-													className='h-full w-full object-cover'
-													referrerPolicy='no-referrer'
-													crossOrigin='anonymous'
-												/>
-											)}
-										</div>
-										<div className='flex h-10 flex-col justify-center'>
-											<CardTitle className='text-base leading-none'>
-												@{data.thread.author?.username}
-											</CardTitle>
-											{data.thread.publishedAt && (
-												<CardDescription className='text-xs leading-none mt-1'>
-													{new Date(
-														data.thread.publishedAt * 1000,
-													).toLocaleString()}
-												</CardDescription>
-											)}
-										</div>
-									</div>
-								</CardHeader>
-								<CardContent className='space-y-4'>
-									<p className='whitespace-pre-wrap text-base'>
-										{data.thread.text}
-									</p>
-								</CardContent>
-								<div className='flex items-center gap-4 border-t px-6 py-4 text-sm text-muted-foreground'>
-									<div className='flex items-center gap-1'>
-										<span className='font-medium text-foreground'>
-											{formatNumber(data.thread.stats?.likes || 0)}
-										</span>{' '}
-										Likes
-									</div>
-									<div className='flex items-center gap-1'>
-										<span className='font-medium text-foreground'>
-											{formatNumber(data.thread.stats?.replies || 0)}
-										</span>{' '}
-										Replies
-									</div>
+						<div className='space-y-4'>
+							{mode === 'profile' && data.replies && data.replies.length > 0 ? (
+								data.replies.map((post) => (
+									<ThreadCard
+										key={post.id}
+										post={post}
+										formatNumber={formatNumber}
+									/>
+								))
+							) : data.thread ? (
+								<ThreadCard post={data.thread} formatNumber={formatNumber} />
+							) : (
+								<div className='text-center text-muted-foreground'>
+									No data available
 								</div>
-							</Card>
-						)}
-
-						{/* Stats / Metadata */}
-						<div className='grid gap-4 md:grid-cols-2'>
-							<Card>
-								<CardHeader className='pb-2'>
-									<CardTitle className='text-sm font-medium text-muted-foreground'>
-										Scraped At
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className='text-2xl font-bold'>
-										{data.metadata?.scrapedAt
-											? new Date(data.metadata.scrapedAt).toLocaleTimeString()
-											: '-'}
-									</div>
-								</CardContent>
-							</Card>
-							<Card>
-								<CardHeader className='pb-2'>
-									<CardTitle className='text-sm font-medium text-muted-foreground'>
-										Processing Time
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className='text-2xl font-bold'>
-										{data.metadata?.processingTime}ms
-									</div>
-								</CardContent>
-							</Card>
+							)}
 						</div>
 					</TabsContent>
 
@@ -243,5 +179,61 @@ export function ScraperForm() {
 				</Tabs>
 			)}
 		</div>
+	);
+}
+
+function ThreadCard({
+	post,
+	formatNumber,
+}: {
+	post: ThreadPost;
+	formatNumber: (num: number) => string;
+}) {
+	return (
+		<Card>
+			<CardHeader className='pb-4'>
+				<div className='flex items-center gap-3'>
+					<div className='h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted'>
+						{post.author?.profilePicture && (
+							// eslint-disable-next-line @next/next/no-img-element
+							<img
+								src={post.author.profilePicture}
+								alt={post.author.username}
+								className='h-full w-full object-cover'
+								referrerPolicy='no-referrer'
+								crossOrigin='anonymous'
+							/>
+						)}
+					</div>
+					<div className='flex h-10 flex-col justify-center'>
+						<CardTitle className='text-base leading-none'>
+							@{post.author?.username}
+						</CardTitle>
+						{post.publishedAt && (
+							<CardDescription className='text-xs leading-none mt-1'>
+								{new Date(post.publishedAt * 1000).toLocaleString()}
+							</CardDescription>
+						)}
+					</div>
+				</div>
+			</CardHeader>
+			<CardContent className='space-y-4'>
+				<p className='whitespace-pre-wrap text-base'>{post.text}</p>
+			</CardContent>
+			<div className='flex items-center gap-4 border-t px-6 py-4 text-sm text-muted-foreground'>
+				<div className='flex items-center gap-1'>
+					<span className='font-medium text-foreground'>
+						{formatNumber(post.stats?.likes || 0)}
+					</span>{' '}
+					Likes
+				</div>
+				<div className='flex items-center gap-1'>
+					<span className='font-medium text-foreground'>
+						{formatNumber(post.stats?.replies || 0)}
+					</span>{' '}
+					Replies
+				</div>
+			</div>
+		</Card>
 	);
 }
