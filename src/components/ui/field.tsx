@@ -1,11 +1,21 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-function Field({ className, ...props }: React.ComponentProps<'div'>) {
+interface FieldProps extends React.ComponentProps<'div'> {
+	orientation?: 'vertical' | 'horizontal';
+}
+
+function Field({ className, orientation = 'vertical', ...props }: FieldProps) {
 	return (
 		<div
 			data-slot='field'
-			className={cn('flex flex-col gap-2', className)}
+			className={cn(
+				'flex gap-2',
+				orientation === 'horizontal'
+					? 'flex-row items-center justify-between'
+					: 'flex-col',
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -24,6 +34,19 @@ function FieldLabel({ className, ...props }: React.ComponentProps<'label'>) {
 	);
 }
 
+function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
+	return <div className={cn('space-y-1', className)} {...props} />;
+}
+
+function FieldTitle({ className, ...props }: React.ComponentProps<'span'>) {
+	return (
+		<span
+			className={cn('font-medium leading-none block', className)}
+			{...props}
+		/>
+	);
+}
+
 function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
 	return (
 		<p
@@ -34,4 +57,4 @@ function FieldDescription({ className, ...props }: React.ComponentProps<'p'>) {
 	);
 }
 
-export { Field, FieldLabel, FieldDescription };
+export { Field, FieldLabel, FieldContent, FieldTitle, FieldDescription };
