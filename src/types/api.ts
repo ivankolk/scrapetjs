@@ -5,6 +5,8 @@ export const scrapeRequestSchema = z.object({
 	url: z.string().url('Invalid URL format'),
 	includeReplies: z.boolean().optional().default(true),
 	maxReplies: z.number().positive().optional(),
+	// Frontend sends 'post' (default) or 'profile'
+	mode: z.enum(['post', 'profile']).optional().default('post'),
 	timeout: z
 		.number()
 		.positive()

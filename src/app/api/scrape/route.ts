@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { scrapeThread } from '@/lib/scraper/threadsScraper';
+import { scrapeThread, scrapeProfile } from '@/lib/scraper/threadsScraper';
 import { scrapeRequestSchema } from '@/types/api';
 import type { ApiResponse } from '@/types/api';
 
@@ -9,12 +9,19 @@ export async function POST(request: NextRequest) {
 		const body = await request.json();
 		const validatedData = scrapeRequestSchema.parse(body);
 
-		// Perform scraping
-		const result = await scrapeThread(validatedData.url, {
-			includeReplies: validatedData.includeReplies,
-			maxReplies: validatedData.maxReplies,
-			timeout: validatedData.timeout,
-		});
+		// Perform scraping based on mode
+		let result;
+		if (validatedData.mode === 'profile') {
+			result = await scrapeProfile(validatedData.url, {
+				timeout: validatedData.timeout,
+			});
+		} else {
+			result = await scrapeThread(validatedData.url, {
+				includeReplies: validatedData.includeReplies,
+				maxReplies: validatedData.maxReplies,
+				timeout: validatedData.timeout,
+			});
+		}
 
 		// Return appropriate response based on result
 		if (result.success) {

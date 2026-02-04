@@ -84,6 +84,10 @@ export class BrowserManager {
 		}
 	}
 
+	getPage(): Page | null {
+		return this.page;
+	}
+
 	async close(): Promise<void> {
 		try {
 			if (this.page) {
