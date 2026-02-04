@@ -5,7 +5,7 @@ export type ScrapeMode = 'post' | 'profile';
 
 export function useScraper() {
 	const [url, setUrl] = useState('');
-	const [mode, setMode] = useState<ScrapeMode>('post');
+	const [mode, setMode] = useState<ScrapeMode>('profile');
 	const [postCount, setPostCount] = useState(10);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);

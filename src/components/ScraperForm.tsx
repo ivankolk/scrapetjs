@@ -3,11 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Loader2, Plus, Minus } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Field, FieldLabel, FieldDescription } from '@/components/ui/field';
 import { useScraper } from '@/hooks/useScraper';
 import { ModeSelector } from './scraper/ModeSelector';
 import { ScraperResults } from './scraper/ScraperResults';
+import { PostCountSelector } from './scraper/PostCountSelector';
 
 export function ScraperForm() {
 	const {
@@ -34,42 +35,11 @@ export function ScraperForm() {
 				<ModeSelector mode={mode} setMode={setMode} disabled={loading} />
 
 				{mode === 'profile' && (
-					<Field className='mt-8'>
-						<FieldLabel>Number of Posts</FieldLabel>
-						<div className='flex items-center gap-2'>
-							<Button
-								type='button'
-								variant='outline'
-								size='icon'
-								onClick={() => setPostCount(Math.max(1, postCount - 1))}
-								disabled={loading || postCount <= 1}
-							>
-								<Minus className='h-4 w-4' />
-							</Button>
-							<Input
-								type='number'
-								value={postCount}
-								onChange={(e) => {
-									const val = parseInt(e.target.value);
-									if (!isNaN(val) && val >= 1) setPostCount(val);
-								}}
-								disabled={loading}
-								className='w-20 text-center font-mono'
-							/>
-							<Button
-								type='button'
-								variant='outline'
-								size='icon'
-								onClick={() => setPostCount(postCount + 1)}
-								disabled={loading}
-							>
-								<Plus className='h-4 w-4' />
-							</Button>
-						</div>
-						<FieldDescription>
-							Approximate number of posts to fetch
-						</FieldDescription>
-					</Field>
+					<PostCountSelector
+						count={postCount}
+						onChange={setPostCount}
+						disabled={loading}
+					/>
 				)}
 
 				<Field className='mt-14'>
