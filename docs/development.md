@@ -47,6 +47,12 @@ The server will start at `http://localhost:3000`.
 
 ## Testing
 
+Run the unit tests:
+
+```bash
+npm test
+```
+
 You can use `curl` or Postman to test the API.
 
 ```bash

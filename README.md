@@ -29,7 +29,8 @@ curl -X POST http://localhost:3000/api/scrape \
   -d '{
     "url": "https://www.threads.net/t/C8H5FiCtESk/",
     "includeReplies": true,
-    "maxReplies": 50
+    "maxReplies": 50,
+    "postCount": 10
   }'
 ```
 
@@ -69,6 +70,7 @@ src/
 - **TypeScript 5** - Типизация
 - **Playwright** - Browser automation
 - **Zod** - Schema validation
+- **Vitest** - Unit Testing
 - **Tailwind CSS 4** - Стилизация
 
 ## ⚙️ Конфигурация
@@ -92,6 +94,7 @@ SCRAPER_HEADLESS=true
   url: string;              // Threads URL
   includeReplies?: boolean; // default: true
   maxReplies?: number;      // limit ответов
+  postCount?: number;       // limit постов (profile mode)
   timeout?: number;         // timeout в ms, max 60000
 }
 ```

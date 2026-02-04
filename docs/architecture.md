@@ -21,9 +21,10 @@ The core logic resides here, split into specialized modules:
   1.  Validates URL.
   2.  Launches Browser.
   3.  Navigates to page.
-  4.  Extracts hidden data.
-  5.  Parses and transforms data.
-  6.  Returns structured result.
+  4.  Handles dynamic loading (scrolling) to fetch requested number of posts.
+  5.  Extracts hidden data.
+  6.  Parses and transforms data.
+  7.  Returns structured result.
 - **`browser.ts`**: Wrapper around Playwright. Handles browser launching, context management, and page navigation. Includes logic for headless execution and resource cleanup.
 - **`parser.ts`**: Responsible for parsing the raw HTML/JSON data extracted from Threads and transforming it into our internal `ThreadPost` types.
 

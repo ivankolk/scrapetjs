@@ -21,6 +21,7 @@ Extracts data from a specific Threads post.
 | `url`            | string  | Yes      | -       | The full URL of the Threads post (e.g., `https://www.threads.net/t/...`). |
 | `includeReplies` | boolean | No       | `true`  | Whether to include replies in the response.                               |
 | `maxReplies`     | number  | No       | `all`   | Maximum number of replies to return.                                      |
+| `postCount`      | number  | No       | `10`    | Approximate number of posts to fetch (profile mode).                      |
 | `timeout`        | number  | No       | `30000` | Operation timeout in milliseconds (max 60000).                            |
 
 #### Request Example
@@ -29,7 +30,8 @@ Extracts data from a specific Threads post.
 {
 	"url": "https://www.threads.net/t/C8H5FiCtESk/",
 	"includeReplies": true,
-	"maxReplies": 10
+	"maxReplies": 10,
+	"postCount": 5
 }
 ```
 
