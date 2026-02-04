@@ -6,6 +6,7 @@ export type ScrapeMode = 'post' | 'profile';
 export function useScraper() {
 	const [url, setUrl] = useState('');
 	const [mode, setMode] = useState<ScrapeMode>('post');
+	const [postCount, setPostCount] = useState(10);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [data, setData] = useState<NonNullable<ScrapeResult['data']> | null>(
@@ -23,7 +24,7 @@ export function useScraper() {
 			const response = await fetch('/api/scrape', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ url, mode }),
+				body: JSON.stringify({ url, mode, postCount }),
 			});
 
 			const result: ScrapeResult = await response.json();
@@ -51,6 +52,8 @@ export function useScraper() {
 		setUrl,
 		mode,
 		setMode,
+		postCount,
+		setPostCount,
 		loading,
 		error,
 		data,

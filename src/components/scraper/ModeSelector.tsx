@@ -22,7 +22,7 @@ export function ModeSelector({ mode, setMode, disabled }: ModeSelectorProps) {
 				value={mode}
 				onValueChange={(val) => setMode(val as ScrapeMode)}
 				disabled={disabled}
-				className='max-w-md'
+				className='max-w-sm'
 			>
 				<FieldLabel htmlFor='mode-post'>
 					<Field orientation='horizontal' className='border p-3 rounded-lg'>
