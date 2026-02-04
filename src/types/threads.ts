@@ -32,6 +32,7 @@ export interface ThreadMedia {
 export interface ScrapeOptions {
 	includeReplies?: boolean; // default: true
 	maxReplies?: number; // default: all
+	postCount?: number; // default: 10
 	timeout?: number; // default: 30000ms
 }
 

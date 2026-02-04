@@ -200,11 +200,36 @@ export async function scrapeProfile(
 		await sleep(2000, 4000);
 
 		// Scroll loop
-		const MAX_SCROLLS = 5;
-		for (let i = 0; i < MAX_SCROLLS; i++) {
+		const { postCount = 10 } = options;
+		// Estimate needed scrolls: base page has ~5-10 posts?
+		// Threads loads more dynamically. We'll scroll until we have enough or hit safety limit.
+		const MAX_SAFETY_SCROLLS = 5;
+		let previousHeight = 0;
+		let noNewContentCount = 0;
+
+		for (let i = 0; i < MAX_SAFETY_SCROLLS; i++) {
+			// Check if we have enough posts
+			// We can't easily count exact posts in the browser context without evaluating
+			// but we can guess or just rely on the captured payloads length as a proxy
+			// or just do a fixed number of scrolls based on desired count.
+			// Let's do a rough estimate: 1 scroll ~= 10 posts
+			if (i * 10 > postCount + 20) {
+				break;
+			}
+
+			previousHeight = await page.evaluate(() => document.body.scrollHeight);
 			await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
 			// Random wait between scrolls (1.5-3s)
 			await sleep(1500, 3000);
+
+			const newHeight = await page.evaluate(() => document.body.scrollHeight);
+			if (newHeight === previousHeight) {
+				noNewContentCount++;
+				if (noNewContentCount >= 3) break; // Stop if no new content after 3 tries
+			} else {
+				noNewContentCount = 0;
+			}
 		}
 
 		// Parse captured payloads to find posts
@@ -245,17 +270,20 @@ export async function scrapeProfile(
 		// Sort by publishedAt desc
 		posts.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
+		// Limit the number of posts
+		const limitedPosts = postCount > 0 ? posts.slice(0, postCount) : posts;
+
 		const processingTime = Date.now() - startTime;
 
 		return {
 			success: true,
 			data: {
-				thread: posts[0] || ({} as ThreadPost),
-				replies: posts,
+				thread: limitedPosts[0] || ({} as ThreadPost),
+				replies: limitedPosts,
 				metadata: {
 					scrapedAt: new Date().toISOString(),
 					url: normalizedUrl,
-					replyCount: posts.length,
+					replyCount: limitedPosts.length,
 					processingTime,
 				},
 			},

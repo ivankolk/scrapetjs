@@ -7,6 +7,7 @@ export const scrapeRequestSchema = z.object({
 	maxReplies: z.number().positive().optional(),
 	// Frontend sends 'post' (default) or 'profile'
 	mode: z.enum(['post', 'profile']).optional().default('post'),
+	postCount: z.number().positive().optional().default(10),
 	timeout: z
 		.number()
 		.positive()

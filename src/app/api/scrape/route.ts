@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
 		let result;
 		if (validatedData.mode === 'profile') {
 			result = await scrapeProfile(validatedData.url, {
+				postCount: validatedData.postCount,
 				timeout: validatedData.timeout,
 			});
 		} else {
